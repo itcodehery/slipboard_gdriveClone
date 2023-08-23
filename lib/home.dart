@@ -86,14 +86,6 @@ class RecentlyAddedFileCard extends StatelessWidget {
     }
   }
 
-  final Map<FileType, Color> fileColors = {
-    FileType.doc: Colors.blue.shade200,
-    FileType.docx: Colors.blue.shade200,
-    FileType.pdf: Colors.red.shade200,
-    FileType.ppt: Colors.orange.shade200,
-    FileType.xlsx: Colors.greenAccent.shade100
-  };
-
   @override
   Widget build(BuildContext context) {
     return Card(

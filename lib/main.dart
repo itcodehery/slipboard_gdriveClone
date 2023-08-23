@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:material3_layout/material3_layout.dart';
 import 'package:netflix_clone/home.dart';
-import 'package:netflix_clone/users.dart';
+import 'package:netflix_clone/files.dart';
 
 void main() {
   runApp(const ClipBoard());
@@ -25,9 +25,9 @@ class ClipBoardState extends State<ClipBoard> {
           canvasColor: Colors.black87,
           colorScheme: ColorScheme(
               brightness: Brightness.light,
-              primary: Colors.purple[400]!,
+              primary: Colors.grey[700]!,
               onPrimary: Colors.white,
-              secondary: Colors.purple[300]!,
+              secondary: Colors.grey.shade600,
               onSecondary: Colors.white,
               error: Colors.redAccent,
               onError: Colors.white,
@@ -52,20 +52,20 @@ class ClipBoardHomePage extends StatelessWidget {
           child: SizedBox(height: 10),
         ),
         title: const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              'CHRIST UNIVERSITY',
+              'CHRIST',
               style: TextStyle(fontSize: 14, letterSpacing: 2),
             ),
-            Text('Slipboard: The Student Clipboard')
+            Text('Slipboard')
           ],
         ),
-        centerTitle: false,
+        centerTitle: true,
       ),
       navigationSettings: RailAndBottomSettings(pages: <Widget>[
         const Home(),
-        const Users()
+        const Files()
       ], destinations: [
         DestinationModel(
           label: 'Home',
