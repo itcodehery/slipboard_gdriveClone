@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:netflix_clone/file_type.dart';
-import 'package:netflix_clone/subjects.dart';
+import 'package:netflix_clone/secondary/file_type.dart';
+import 'package:netflix_clone/secondary/subjects.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
   @override
-  _HomeState createState() => _HomeState();
+  HomeState createState() => HomeState();
 }
 
 List<Subjects> subjectList = [
@@ -16,7 +16,7 @@ List<Subjects> subjectList = [
   Subjects.holisticDev
 ];
 
-class _HomeState extends State<Home> {
+class HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

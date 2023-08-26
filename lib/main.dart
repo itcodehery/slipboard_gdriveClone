@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'widget_tree.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:material3_layout/material3_layout.dart';
-import 'package:netflix_clone/home.dart';
-import 'package:netflix_clone/files.dart';
+import 'package:netflix_clone/pages/home.dart';
+import 'package:netflix_clone/pages/files.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const ClipBoard());
 }
 
@@ -35,7 +40,7 @@ class ClipBoardState extends State<ClipBoard> {
               onBackground: Colors.white,
               surface: Colors.grey.shade900,
               onSurface: Colors.white)),
-      home: const ClipBoardHomePage(),
+      home: const Scaffold(body: WidgetTree()),
     );
   }
 }

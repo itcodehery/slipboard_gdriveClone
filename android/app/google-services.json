@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "444147400398",
+    "project_id": "student-clipboard",
+    "storage_bucket": "student-clipboard.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:444147400398:android:929982c39535ea80161a9f",
+        "android_client_info": {
+          "package_name": "com.slipboard.student"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "444147400398-n5o7em4sl7gn13tt73ulvgt3li295qjp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0qQGkYGCZoWMp1zTemhh3tMlph87yeD8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "444147400398-n5o7em4sl7gn13tt73ulvgt3li295qjp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
