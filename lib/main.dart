@@ -6,6 +6,8 @@ import 'package:material3_layout/material3_layout.dart';
 import 'package:netflix_clone/pages/home.dart';
 import 'package:netflix_clone/pages/files.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'auth.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,7 +48,30 @@ class ClipBoardState extends State<ClipBoard> {
 }
 
 class ClipBoardHomePage extends StatelessWidget {
-  const ClipBoardHomePage({Key? key}) : super(key: key);
+  ClipBoardHomePage({Key? key}) : super(key: key);
+
+  final User? user = Auth().currentUser;
+
+  Future<void> signOut() async {
+    await Auth().signOut();
+  }
+
+  Widget _userUID() {
+    return Text(
+      user?.email ?? 'User email',
+      style: const TextStyle(fontSize: 14),
+    );
+  }
+
+  Widget _signOutButton() {
+    return ElevatedButton(
+        onPressed: signOut,
+        style: const ButtonStyle(elevation: MaterialStatePropertyAll(0)),
+        child: const Text(
+          'Sign Out',
+          style: TextStyle(color: Colors.white),
+        ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,17 +81,24 @@ class ClipBoardHomePage extends StatelessWidget {
           preferredSize: Size(10, 10),
           child: SizedBox(height: 10),
         ),
-        title: const Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'CHRIST',
-              style: TextStyle(fontSize: 14, letterSpacing: 2),
-            ),
-            Text('Slipboard')
+            const Text('Slipboard'),
+            const SizedBox(height: 2),
+            Row(
+              children: [
+                const Text(
+                  'Signed in as ',
+                  style: TextStyle(fontSize: 14),
+                ),
+                _userUID()
+              ],
+            )
           ],
         ),
-        centerTitle: true,
+        centerTitle: false,
+        actions: [_signOutButton()],
       ),
       navigationSettings: RailAndBottomSettings(pages: <Widget>[
         const Home(),

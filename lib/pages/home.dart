@@ -1,12 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:netflix_clone/secondary/file_type.dart';
 import 'package:netflix_clone/secondary/subjects.dart';
+import 'package:netflix_clone/auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
   @override
   HomeState createState() => HomeState();
+}
+
+final User? user = Auth().currentUser;
+
+Future<void> signOut() async {
+  await Auth().signOut();
+}
+
+Widget _userUID() {
+  return Text(
+    user?.email ?? 'User email',
+    style: const TextStyle(fontSize: 12),
+  );
+}
+
+Widget _signOutButton() {
+  return const ElevatedButton(
+      onPressed: signOut,
+      child: Text(
+        'Sign Out',
+        style: TextStyle(color: Colors.white),
+      ));
 }
 
 List<Subjects> subjectList = [

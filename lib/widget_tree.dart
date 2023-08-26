@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:netflix_clone/main.dart';
+import 'package:netflix_clone/pages/home.dart';
 import 'auth.dart';
-import 'pages/home_page.dart';
 import 'pages/login_register_page.dart';
 
 class WidgetTree extends StatefulWidget {
@@ -17,7 +18,7 @@ class _WidgetTreeState extends State<WidgetTree> {
       stream: Auth().authStateChanges,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return HomePage();
+          return ClipBoardHomePage();
         } else {
           return const LoginPage();
         }
