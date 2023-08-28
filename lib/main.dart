@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:netflix_clone/pages/upload_page.dart';
 import 'widget_tree.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:material3_layout/material3_layout.dart';
@@ -84,7 +85,10 @@ class ClipBoardHomePage extends StatelessWidget {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Slipboard'),
+            const Text(
+              'Slipboard',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 2),
             Row(
               children: [
@@ -102,7 +106,8 @@ class ClipBoardHomePage extends StatelessWidget {
       ),
       navigationSettings: RailAndBottomSettings(pages: <Widget>[
         const Home(),
-        const Files()
+        const Files(),
+        const UploadPage(),
       ], destinations: [
         DestinationModel(
           label: 'Home',
@@ -114,8 +119,13 @@ class ClipBoardHomePage extends StatelessWidget {
           label: 'Files',
           icon: const Icon(Icons.file_copy_outlined),
           selectedIcon: const Icon(Icons.file_copy),
-          tooltip: 'Users page',
+          tooltip: 'View all files',
         ),
+        DestinationModel(
+            label: 'Upload',
+            icon: const Icon(Icons.upload_file),
+            selectedIcon: const Icon(Icons.upload_file_rounded),
+            tooltip: 'Upload a file')
       ]),
       navigationType: NavigationTypeEnum.railAndBottomNavBar,
       theme: Theme.of(context),

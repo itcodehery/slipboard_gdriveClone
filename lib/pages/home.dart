@@ -52,17 +52,6 @@ class HomeState extends State<Home> {
     futureFiles = FirebaseStorage.instance.ref('/files').listAll();
   }
 
-  Map<String, Color> fileColorMap = {
-    'jpg': Colors.blueAccent.shade100,
-    'png': Colors.blueAccent.shade100,
-    'jpeg': Colors.blueAccent.shade100,
-    'doc': Colors.blue.shade200,
-    'docx': Colors.blue.shade200,
-    'pdf': Colors.red.shade200,
-    'ppt': Colors.orange.shade200,
-    'xlsx': Colors.greenAccent.shade100
-  };
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,16 +62,16 @@ class HomeState extends State<Home> {
             final files = snapshot.data!.items;
             return Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: ListView(
                 children: [
                   const SizedBox(height: 10),
                   const Text('  Recently Uploaded:'),
                   const SizedBox(height: 10),
                   ListView.builder(
-                    itemCount: 3,
+                    itemCount: files.length > 3 ? 3 : files.length,
                     reverse: true,
                     shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
                       final file = files[index];
                       final fileref =
@@ -110,7 +99,13 @@ class HomeState extends State<Home> {
                                           fontWeight: FontWeight.bold,
                                           color: Colors.black),
                                     ))),
-                            Text(file.name.split('.').first)
+                            SizedBox(
+                              width: 140,
+                              child: Text(
+                                file.name.split('.').first,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            )
                           ]),
                           subtitle: const Row(
                             children: [Text('file time '), Text('file date')],
@@ -132,7 +127,8 @@ class HomeState extends State<Home> {
               ),
             );
           } else if (snapshot.hasError) {
-            return const Center(child: Text('Could not retrieve data!'));
+            return const Center(
+                child: Text('Could not retrieve data! Check your Connection!'));
           } else {
             return const Center(
               child: CircularProgressIndicator(),
@@ -185,75 +181,6 @@ class HomeState extends State<Home> {
 
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text('Downloaded ${ref.name}')));
-  }
-}
-
-class RecentlyAddedFileCard extends StatelessWidget {
-  RecentlyAddedFileCard({
-    super.key,
-    required this.title,
-    required this.fileType,
-    required this.uploaderStudent,
-    required this.uploadedTime,
-  });
-
-  final String title;
-  final FileType fileType;
-  final String uploaderStudent;
-  final TimeOfDay uploadedTime;
-
-  String convertFileTypetoString(FileType fileType) {
-    switch (fileType) {
-      case FileType.doc:
-        return 'DOC';
-      case FileType.docx:
-        return 'DOCX';
-      case FileType.pdf:
-        return 'PDF';
-      case FileType.ppt:
-        return 'PPT';
-      case FileType.xlsx:
-        return 'XLSX';
-      default:
-        return 'UNK';
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
-        trailing: const Icon(Icons.download),
-        title: Row(
-          children: [
-            Card(
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(6))),
-                color: fileColors[fileType],
-                child: Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 1, 8, 1),
-                    child: Text(
-                      convertFileTypetoString(fileType),
-                      style: const TextStyle(color: Colors.black),
-                    ))),
-            const SizedBox(width: 5),
-            Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.w700),
-            )
-          ],
-        ),
-        subtitle: Row(
-          children: [
-            const Text('Uploaded by '),
-            Text(uploaderStudent,
-                style: const TextStyle(fontStyle: FontStyle.italic)),
-            const Text(' at '),
-            Text(uploadedTime.format(context))
-          ],
-        ),
-      ),
-    );
   }
 }
 

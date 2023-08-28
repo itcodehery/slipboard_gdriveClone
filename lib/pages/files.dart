@@ -27,16 +27,17 @@ class _FilesState extends State<Files> {
     'docx': Colors.blue.shade200,
     'pdf': Colors.red.shade200,
     'ppt': Colors.orange.shade200,
+    'pptx': Colors.orange.shade200,
     'xlsx': Colors.greenAccent.shade100
   };
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {},
-          icon: const Icon(Icons.upload),
-          label: const Text('Upload')),
+      // floatingActionButton: FloatingActionButton.extended(
+      //     onPressed: () {},
+      //     icon: const Icon(Icons.upload),
+      //     label: const Text('Upload')),
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       body: FutureBuilder(
         future: futureFiles,
@@ -45,18 +46,21 @@ class _FilesState extends State<Files> {
             final files = snapshot.data!.items;
             return Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: ListView(
+                scrollDirection: Axis.vertical,
+                physics: const AlwaysScrollableScrollPhysics(),
                 children: [
                   const SizedBox(height: 10),
                   const Text('  All Files:'),
                   const SizedBox(height: 10),
                   ListView.builder(
                     itemCount: files.length,
-                    reverse: true,
+                    reverse: false,
                     shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
-                      final file = files[index];
+                      final reversedIndex = files.length - 1 - index;
+                      final file = files[reversedIndex];
                       final fileref =
                           FirebaseStorage.instance.ref(file.fullPath);
                       final Future<FullMetadata> fileMeta =
@@ -82,10 +86,15 @@ class _FilesState extends State<Files> {
                                           fontWeight: FontWeight.bold,
                                           color: Colors.black),
                                     ))),
-                            Text(file.name.split('.').first)
+                            SizedBox(
+                                width: 150,
+                                child: Text(
+                                  file.name.split('.').first,
+                                  overflow: TextOverflow.ellipsis,
+                                ))
                           ]),
                           subtitle: const Row(
-                            children: [Text('file time '), Text('file date')],
+                            children: [Text('file time'), Text('file date')],
                           ),
                           trailing: IconButton(
                               onPressed: () {
