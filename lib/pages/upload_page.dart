@@ -16,6 +16,8 @@ class UploadPageState extends State<UploadPage> {
   PlatformFile? pickedFile;
   UploadTask? uploadTask;
 
+  Map<String, String> yourUploadsList = {};
+
   Future uploadFile() async {
     final path = 'files/${pickedFile!.name}';
     final file = File(pickedFile!.path!);
@@ -23,12 +25,17 @@ class UploadPageState extends State<UploadPage> {
     setState(() {
       uploadTask = ref.putFile(file);
     });
-    final snapshot = await uploadTask!.whenComplete(() {});
+    final snapshot = await uploadTask!.whenComplete(() {
+      yourUploadsList.addAll({
+        pickedFile!.name.split('.').first: pickedFile!.name.split('.').last
+      });
+    });
     final urlDownload = await snapshot.ref.getDownloadURL();
     debugPrint('Download link: $urlDownload');
 
     setState(() {
       uploadTask = null;
+      pickedFile = null;
     });
   }
 
@@ -81,7 +88,7 @@ class UploadPageState extends State<UploadPage> {
                               : pickedFile!.name,
                           overflow: TextOverflow.ellipsis),
                     ),
-                    subtitle: pickedFile == null
+                    subtitle: uploadTask == null
                         ? null
                         : buildProgress(
                             fileColorMap[pickedFile == null
@@ -123,6 +130,8 @@ class UploadPageState extends State<UploadPage> {
               const SizedBox(height: 10),
               const Text('  Your uploads:'),
               const SizedBox(height: 10),
+              YourUploadsBuilder(
+                  yourUploadsList: yourUploadsList, myUploadCard: myUploadCard)
             ]),
       ),
     );
@@ -135,6 +144,40 @@ class UploadPageState extends State<UploadPage> {
           'Select a file first!',
           style: TextStyle(color: Colors.white),
         )));
+  }
+
+  Widget myUploadCard(String title, String fileType) {
+    return Card(
+      child: ListTile(
+        leading: Card(
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(6))),
+          color: fileColorMap[fileType],
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(8, 1, 8, 1),
+            child: Text(
+              fileType.toUpperCase(),
+              style: const TextStyle(color: Colors.black),
+            ),
+          ),
+        ),
+        title: SizedBox(
+            width: 60,
+            child: Text(
+              title,
+              overflow: TextOverflow.ellipsis,
+            )),
+      ),
+    );
+  }
+
+  Widget myUploadNull() {
+    return const Card(
+      child: ListTile(
+        title: Text('Nothing uploaded yet.'),
+        titleAlignment: ListTileTitleAlignment.center,
+      ),
+    );
   }
 
   Widget buildProgress(Color? color) => StreamBuilder<TaskSnapshot>(
@@ -189,5 +232,23 @@ class SlipActionButton extends StatelessWidget {
             backgroundColor: MaterialStatePropertyAll(backgroundColor)),
         onPressed: onPress,
         child: Text(buttonText));
+  }
+}
+
+class YourUploadsBuilder extends StatelessWidget {
+  const YourUploadsBuilder(
+      {Key? key, required this.yourUploadsList, required this.myUploadCard})
+      : super(key: key);
+  final Map<String, String> yourUploadsList;
+  final Function myUploadCard;
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+        shrinkWrap: true,
+        itemCount: yourUploadsList.length,
+        itemBuilder: (context, index) {
+          return myUploadCard(yourUploadsList.entries.elementAt(index).key,
+              yourUploadsList.entries.elementAt(index).value);
+        });
   }
 }

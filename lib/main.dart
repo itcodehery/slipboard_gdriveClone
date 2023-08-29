@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:netflix_clone/pages/aboutPage.dart';
 import 'package:netflix_clone/pages/upload_page.dart';
 import 'widget_tree.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -44,6 +45,7 @@ class ClipBoardState extends State<ClipBoard> {
               surface: Colors.grey.shade900,
               onSurface: Colors.white)),
       home: const Scaffold(body: WidgetTree()),
+      routes: {'About': (context) => const AboutPage()},
     );
   }
 }
@@ -76,6 +78,9 @@ class ClipBoardHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String title = 'Sign Out';
+    String title2 = 'About';
+
     return NavigationScaffold(
       appBar: AppBar(
         bottom: const PreferredSize(
@@ -102,7 +107,30 @@ class ClipBoardHomePage extends StatelessWidget {
           ],
         ),
         centerTitle: false,
-        actions: [_signOutButton()],
+        actions: [
+          PopupMenuButton(
+            itemBuilder: (context) {
+              return [
+                PopupMenuItem<String>(
+                  value: title,
+                  child: Text(title),
+                ),
+                PopupMenuItem<String>(
+                  value: title2,
+                  child: Text(title2),
+                ),
+              ];
+            },
+            onSelected: (value) {
+              switch (value) {
+                case 'Sign Out':
+                  signOut();
+                case 'About':
+                  Navigator.of(context).pushNamed('About');
+              }
+            },
+          )
+        ],
       ),
       navigationSettings: RailAndBottomSettings(pages: <Widget>[
         const Home(),

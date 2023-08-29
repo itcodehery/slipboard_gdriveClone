@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:netflix_clone/secondary/file_type.dart';
 import 'package:path_provider/path_provider.dart';
 
 class Files extends StatefulWidget {
@@ -18,18 +19,6 @@ class _FilesState extends State<Files> {
     super.initState();
     futureFiles = FirebaseStorage.instance.ref('/files').listAll();
   }
-
-  Map<String, Color> fileColorMap = {
-    'jpg': Colors.blueAccent.shade100,
-    'png': Colors.blueAccent.shade100,
-    'jpeg': Colors.blueAccent.shade100,
-    'doc': Colors.blue.shade200,
-    'docx': Colors.blue.shade200,
-    'pdf': Colors.red.shade200,
-    'ppt': Colors.orange.shade200,
-    'pptx': Colors.orange.shade200,
-    'xlsx': Colors.greenAccent.shade100
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -89,18 +78,18 @@ class _FilesState extends State<Files> {
                             SizedBox(
                                 width: 150,
                                 child: Text(
-                                  file.name.split('.').first,
+                                  ' ${file.name.split('.').first}',
                                   overflow: TextOverflow.ellipsis,
                                 ))
                           ]),
                           subtitle: const Row(
-                            children: [Text('file time'), Text('file date')],
+                            children: [Text('13:24'), Text(' | 6/7/23')],
                           ),
                           trailing: IconButton(
                               onPressed: () {
                                 downloadFile(file);
                               },
-                              icon: const Icon(Icons.download)),
+                              icon: const Icon(Icons.download_for_offline)),
                         ),
                       );
                     },

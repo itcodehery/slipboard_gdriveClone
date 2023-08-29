@@ -114,7 +114,7 @@ class HomeState extends State<Home> {
                               onPressed: () {
                                 downloadFile(file);
                               },
-                              icon: const Icon(Icons.download)),
+                              icon: const Icon(Icons.download_for_offline)),
                         ),
                       );
                     },
