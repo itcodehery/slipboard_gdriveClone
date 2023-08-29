@@ -1,7 +1,11 @@
 # Slipboard: The Student Clipboard
 
-A new Flutter project.
+A Student File Bucket.
 
-## Screenshot
+## Alpha Screenshots
 
-<img src="/assets/alpha.png" alt="Screenshot" width="135" height="300"/>
+<p float="left">
+    <img src="/assets/home.png" alt="Screenshot" width="135" height="300"/>
+    <img src="/assets/files.png" alt="Screenshot" width="135" height="300"/>
+    <img src="/assets/upload.png" alt="Screenshot" width="135" height="300"/>
+</p>
