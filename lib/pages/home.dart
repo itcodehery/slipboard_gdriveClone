@@ -65,60 +65,91 @@ class HomeState extends State<Home> {
               child: ListView(
                 children: [
                   const SizedBox(height: 10),
+                  Card(
+                      child: Padding(
+                    padding: const EdgeInsets.fromLTRB(4, 4, 4, 6),
+                    child: ListTile(
+                        title: Text(files.length.toString(),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 30)),
+                        subtitle: const Text('files uploaded'),
+                        trailing: IconButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, 'Files');
+                          },
+                          icon: const Icon(Icons.file_copy_sharp),
+                        )),
+                  )),
+                  const SizedBox(height: 10),
                   const Text('  Recently Uploaded:'),
                   const SizedBox(height: 10),
-                  ListView.builder(
-                    itemCount: files.length > 3 ? 3 : files.length,
-                    reverse: true,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      final file = files[index];
-                      final fileref =
-                          FirebaseStorage.instance.ref(file.fullPath);
-                      final Future<FullMetadata> fileMeta =
-                          fileref.getMetadata();
+                  files.isEmpty
+                      ? const Card(
+                          child: ListTile(
+                              title: Text('Upload files to see them here!')),
+                        )
+                      : ListView.builder(
+                          itemCount: files.length > 3 ? 3 : files.length,
+                          reverse: true,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            final file = files[index];
+                            final fileref =
+                                FirebaseStorage.instance.ref(file.fullPath);
+                            final Future<FullMetadata> fileMeta =
+                                fileref.getMetadata();
 
-                      return Card(
-                        shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(8))),
-                        child: ListTile(
-                          title: Row(children: [
-                            Card(
-                                shape: const RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(6))),
-                                color: fileColorMap[
-                                    file.name.split('.').last.toLowerCase()],
-                                child: Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(8, 1, 8, 1),
+                            return Card(
+                              shape: const RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8))),
+                              child: ListTile(
+                                title: Row(children: [
+                                  Card(
+                                      shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(6))),
+                                      color: fileColorMap[file.name
+                                          .split('.')
+                                          .last
+                                          .toLowerCase()],
+                                      child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              8, 1, 8, 1),
+                                          child: Text(
+                                            file.name
+                                                .split(".")
+                                                .last
+                                                .toUpperCase(),
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black),
+                                          ))),
+                                  SizedBox(
+                                    width: 140,
                                     child: Text(
-                                      file.name.split(".").last.toUpperCase(),
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
-                                    ))),
-                            SizedBox(
-                              width: 140,
-                              child: Text(
-                                file.name.split('.').first,
-                                overflow: TextOverflow.ellipsis,
+                                      file.name.split('.').first,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  )
+                                ]),
+                                subtitle: const Row(
+                                  children: [
+                                    Text('file time '),
+                                    Text('file date')
+                                  ],
+                                ),
+                                trailing: IconButton(
+                                    onPressed: () {
+                                      downloadFile(file);
+                                    },
+                                    icon:
+                                        const Icon(Icons.download_for_offline)),
                               ),
-                            )
-                          ]),
-                          subtitle: const Row(
-                            children: [Text('file time '), Text('file date')],
-                          ),
-                          trailing: IconButton(
-                              onPressed: () {
-                                downloadFile(file);
-                              },
-                              icon: const Icon(Icons.download_for_offline)),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
                   const SizedBox(height: 10),
                   const Text('  Your Subjects:'),
                   const SizedBox(height: 10),
@@ -136,38 +167,6 @@ class HomeState extends State<Home> {
           }
         },
       ),
-      //     body: Padding(
-      //   padding: const EdgeInsets.all(10),
-      //   child: ListView(
-      //     children: [
-      //       const SizedBox(height: 10),
-      //       const Text('  Recently Uploaded:'),
-      //       const SizedBox(height: 10),
-      //       RecentlyAddedFileCard(
-      //         fileType: FileType.pdf,
-      //         title: 'Web Tech Notes',
-      //         uploaderStudent: 'Sruti',
-      //         uploadedTime: const TimeOfDay(hour: 12, minute: 45),
-      //       ),
-      //       RecentlyAddedFileCard(
-      //         title: 'C++ Important Questions',
-      //         fileType: FileType.ppt,
-      //         uploaderStudent: 'Abin',
-      //         uploadedTime: const TimeOfDay(hour: 10, minute: 23),
-      //       ),
-      //       RecentlyAddedFileCard(
-      //         title: 'DS Project Teams',
-      //         fileType: FileType.xlsx,
-      //         uploaderStudent: 'Karthik',
-      //         uploadedTime: const TimeOfDay(hour: 8, minute: 45),
-      //       ),
-      //       const SizedBox(height: 10),
-      //       const Text('  Your Subjects:'),
-      //       const SizedBox(height: 10),
-      //       for (Subjects a in subjectList) SubjectCard(subject: a)
-      //     ],
-      //   ),
-      // )
     );
   }
 

@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:get/get.dart';
+import 'package:netflix_clone/pages/missing_page.dart';
 import 'package:netflix_clone/secondary/file_type.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:netflix_clone/sharprohelp.dart';
 
 class Files extends StatefulWidget {
   const Files({Key? key}) : super(key: key);
@@ -13,6 +16,7 @@ class Files extends StatefulWidget {
 
 class _FilesState extends State<Files> {
   late Future<ListResult> futureFiles;
+  Map<String, DateTime> futureUploadTimeMap = {};
 
   @override
   void initState() {
@@ -20,14 +24,13 @@ class _FilesState extends State<Files> {
     futureFiles = FirebaseStorage.instance.ref('/files').listAll();
   }
 
+  void getTimeMap() async {
+    futureUploadTimeMap = await SharedPrefMapHelper.getMap('uploadDate');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // floatingActionButton: FloatingActionButton.extended(
-      //     onPressed: () {},
-      //     icon: const Icon(Icons.upload),
-      //     label: const Text('Upload')),
-      floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       body: FutureBuilder(
         future: futureFiles,
         builder: (context, snapshot) {
@@ -52,8 +55,7 @@ class _FilesState extends State<Files> {
                       final file = files[reversedIndex];
                       final fileref =
                           FirebaseStorage.instance.ref(file.fullPath);
-                      final Future<FullMetadata> fileMeta =
-                          fileref.getMetadata();
+                      final uploadTimeofFile = futureUploadTimeMap[file.name];
 
                       return Card(
                         shape: const RoundedRectangleBorder(
@@ -82,8 +84,15 @@ class _FilesState extends State<Files> {
                                   overflow: TextOverflow.ellipsis,
                                 ))
                           ]),
-                          subtitle: const Row(
-                            children: [Text('13:24'), Text(' | 6/7/23')],
+                          subtitle: Row(
+                            children: [
+                              Text(uploadTimeofFile == null
+                                  ? 'Upload time not found'
+                                  : '${uploadTimeofFile.hour.toString()}:${uploadTimeofFile.minute.toString()}'),
+                              Text(uploadTimeofFile == null
+                                  ? ''
+                                  : '${uploadTimeofFile.day.toString()}/${uploadTimeofFile.month.toString()}/${uploadTimeofFile.year.toString()}'),
+                            ],
                           ),
                           trailing: IconButton(
                               onPressed: () {
@@ -100,9 +109,7 @@ class _FilesState extends State<Files> {
           } else if (snapshot.hasError) {
             return const Center(child: Text('Could not retrieve data!'));
           } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const MissingPage();
           }
         },
       ),

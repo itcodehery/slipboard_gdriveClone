@@ -4,6 +4,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:netflix_clone/secondary/file_type.dart';
+import 'package:netflix_clone/sharedprefshelper.dart';
+import 'package:netflix_clone/sharprohelp.dart';
 
 class UploadPage extends StatefulWidget {
   const UploadPage({Key? key}) : super(key: key);
@@ -13,11 +15,26 @@ class UploadPage extends StatefulWidget {
 }
 
 class UploadPageState extends State<UploadPage> {
+  @override
+  void initState() {
+    super.initState();
+    getUploadedCards();
+    getUploadTimeData();
+  }
+
+  //misc
   PlatformFile? pickedFile;
   UploadTask? uploadTask;
 
-  Map<String, String> yourUploadsList = {};
+  //keys
+  static const String uploadedEntriesKey = 'uploadedEntries';
+  static const String uploadDateKey = 'uploadDate';
 
+  //maps
+  Map<String, String> yourUploadsList = {};
+  Map<String, DateTime> uploadMeta = {};
+
+  //functions
   Future uploadFile() async {
     final path = 'files/${pickedFile!.name}';
     final file = File(pickedFile!.path!);
@@ -29,10 +46,17 @@ class UploadPageState extends State<UploadPage> {
       yourUploadsList.addAll({
         pickedFile!.name.split('.').first: pickedFile!.name.split('.').last
       });
+      uploadMeta.addAll({pickedFile!.name: DateTime.now()});
+      SharedPrefMapHelper.saveMap(uploadDateKey, uploadMeta);
+      SharedPreferencesHelper.saveMap(yourUploadsList, uploadedEntriesKey);
     });
     final urlDownload = await snapshot.ref.getDownloadURL();
     debugPrint('Download link: $urlDownload');
 
+    uploadMeta = await SharedPreferencesHelper.getUploadTimeMap(uploadDateKey);
+    yourUploadsList = await SharedPreferencesHelper.getMap(uploadedEntriesKey);
+    dateTimeSubtitle = Text(
+        "${uploadMeta[pickedFile!.name]!.hour.toString()}: ${uploadMeta[pickedFile!.name]!.minute.toString()} on ${uploadMeta[pickedFile!.name]!.day.toString()}/${uploadMeta[pickedFile!.name]!.month.toString()}");
     setState(() {
       uploadTask = null;
       pickedFile = null;
@@ -47,6 +71,28 @@ class UploadPageState extends State<UploadPage> {
     });
   }
 
+  //initialization functions
+  void getUploadedCards() async {
+    Map<String, String> uploadList =
+        await SharedPreferencesHelper.getMap(uploadedEntriesKey);
+    if (uploadList.isNotEmpty) {
+      setState(() {
+        yourUploadsList = uploadList;
+      });
+    }
+  }
+
+  void getUploadTimeData() async {
+    Map<String, DateTime> uploadData =
+        await SharedPrefMapHelper.getMap(uploadDateKey);
+    if (uploadMeta.isNotEmpty) {
+      setState(() {
+        uploadMeta = uploadData;
+      });
+    }
+  }
+
+  //main widget
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,7 +120,7 @@ class UploadPageState extends State<UploadPage> {
                         padding: const EdgeInsets.fromLTRB(8, 1, 8, 1),
                         child: Text(
                           pickedFile == null
-                              ? 'UNK'
+                              ? ' > '
                               : pickedFile!.name.split('.').last.toUpperCase(),
                           style: const TextStyle(color: Colors.black),
                         ),
@@ -127,11 +173,31 @@ class UploadPageState extends State<UploadPage> {
                   color: Colors.grey.shade700,
                 ),
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('  Your uploads:'),
+                  TextButton(
+                    onPressed: () {
+                      //this function should clear all the entries in uploadedfiles
+                      setState(() {
+                        yourUploadsList.clear();
+                        uploadMeta.clear();
+                        SharedPrefMapHelper.saveMap(uploadDateKey, uploadMeta);
+                        SharedPreferencesHelper.saveMap(
+                            yourUploadsList, uploadedEntriesKey);
+                      });
+                    },
+                    child: const Icon(Icons.clear_all, color: Colors.white),
+                  ),
+                ],
+              ),
               const SizedBox(height: 10),
-              const Text('  Your uploads:'),
-              const SizedBox(height: 10),
-              YourUploadsBuilder(
-                  yourUploadsList: yourUploadsList, myUploadCard: myUploadCard)
+              yourUploadsList.isEmpty
+                  ? myUploadNull()
+                  : YourUploadsBuilder(
+                      yourUploadsList: yourUploadsList,
+                      myUploadCard: myUploadCard)
             ]),
       ),
     );
@@ -145,6 +211,8 @@ class UploadPageState extends State<UploadPage> {
           style: TextStyle(color: Colors.white),
         )));
   }
+
+  Widget dateTimeSubtitle = const Text('upload date unknown');
 
   Widget myUploadCard(String title, String fileType) {
     return Card(
@@ -167,6 +235,7 @@ class UploadPageState extends State<UploadPage> {
               title,
               overflow: TextOverflow.ellipsis,
             )),
+        subtitle: dateTimeSubtitle,
       ),
     );
   }
@@ -174,7 +243,7 @@ class UploadPageState extends State<UploadPage> {
   Widget myUploadNull() {
     return const Card(
       child: ListTile(
-        title: Text('Nothing uploaded yet.'),
+        title: Text('Nothing uploaded by you yet.'),
         titleAlignment: ListTileTitleAlignment.center,
       ),
     );
@@ -196,7 +265,7 @@ class UploadPageState extends State<UploadPage> {
                 height: 5,
                 child: LinearProgressIndicator(
                   value: progress,
-                  backgroundColor: Colors.blueGrey,
+                  backgroundColor: Colors.black12,
                   color: color,
                 ),
               );

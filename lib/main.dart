@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:netflix_clone/pages/aboutPage.dart';
+import 'package:netflix_clone/pages/about.dart';
+import 'package:netflix_clone/pages/search.dart';
 import 'package:netflix_clone/pages/upload_page.dart';
 import 'widget_tree.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -28,6 +29,8 @@ class ClipBoardState extends State<ClipBoard> {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      debugShowMaterialGrid: false,
       theme: ThemeData(
           useMaterial3: true,
           fontFamily: 'SFProDisplay',
@@ -45,7 +48,12 @@ class ClipBoardState extends State<ClipBoard> {
               surface: Colors.grey.shade900,
               onSurface: Colors.white)),
       home: const Scaffold(body: WidgetTree()),
-      routes: {'About': (context) => const AboutPage()},
+      routes: {
+        'About': (context) => const AboutPage(),
+        'Search': (context) => const Search(),
+        'Files': (context) => const Files(),
+        'Upload': (context) => const UploadPage(),
+      },
     );
   }
 }
@@ -83,9 +91,27 @@ class ClipBoardHomePage extends StatelessWidget {
 
     return NavigationScaffold(
       appBar: AppBar(
-        bottom: const PreferredSize(
-          preferredSize: Size(10, 10),
-          child: SizedBox(height: 10),
+        bottom: PreferredSize(
+          preferredSize: const Size(10, 80),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(6)),
+              ),
+              color: Colors.black38,
+              child: ListTile(
+                title: const Text(
+                  'Search for files',
+                  style: TextStyle(
+                      fontFamily: 'SFProDisplay', color: Colors.white38),
+                ),
+                trailing: const Icon(Icons.search, color: Colors.white24),
+                onTap: () =>
+                    Navigator.of(context).pushReplacementNamed('Search'),
+              ),
+            ),
+          ),
         ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,7 +129,7 @@ class ClipBoardHomePage extends StatelessWidget {
                 ),
                 _userUID()
               ],
-            )
+            ),
           ],
         ),
         centerTitle: false,
@@ -129,7 +155,7 @@ class ClipBoardHomePage extends StatelessWidget {
                   Navigator.of(context).pushNamed('About');
               }
             },
-          )
+          ),
         ],
       ),
       navigationSettings: RailAndBottomSettings(pages: <Widget>[
